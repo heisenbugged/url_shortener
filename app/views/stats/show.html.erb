@@ -1,0 +1,9 @@
+<p>Top 10 URLs</p>
+
+<% @short_urls.each_with_index do |el, i| %>
+  <p>
+    <%= i+1 %>.
+    <%= link_to el.full_link, el.full_link %> (<%= pluralize(el.count, 'time') %>)
+  </p>
+<% end %>
+
