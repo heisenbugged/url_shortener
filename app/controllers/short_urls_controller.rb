@@ -22,9 +22,7 @@ class ShortUrlsController < ApplicationController
   end
 
   def create
-    @short_url = find_or_create_url
-    @short_url.generate_code if @short_url.code.blank?
-
+    @short_url = ShortUrl.generate(short_url_params)
     if @short_url.save
       redirect_to short_url_path(@short_url.code)
     else
@@ -33,18 +31,6 @@ class ShortUrlsController < ApplicationController
   end
 
   private
-
-  def find_or_create_url
-    ShortUrl.find_by_email_and_full_link(
-      params[:email],
-      params[:full_link]
-    ) || ShortUrl.new(short_url_params)
-  end
-
-
-  def code_url(short_url)
-    
-  end
 
   def short_url_params
     params[:short_url].permit(:email, :full_link)
