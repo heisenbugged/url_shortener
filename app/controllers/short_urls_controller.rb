@@ -4,7 +4,7 @@ class ShortUrlsController < ApplicationController
   end
 
   def redirect
-    @short_url = ShortUrl.find_by_code(params[:code])
+    @short_url = ShortUrl.find_by_code(params[:id])
     if @short_url
       redirect_to @short_url.full_link
     else

@@ -7,5 +7,5 @@ Rails.application.routes.draw do
   end
 
   # Make sure this route stays at the bottom so that it doesn't 'eat up' other routes.
-  get '/:code', to: 'short_urls#redirect', constraints: { code: /[a-z]{5}/ }  
+  get '/:id', to: 'short_urls#redirect', constraints: { id: /[a-z]{5}/ }  
 end
