@@ -1,14 +1,16 @@
 require 'rails_helper'
 
 describe Api::ShortUrlsController, type: :controller do
+  EMAIL = "email@email.com"
+  FULL_LINK = "http://www.google.com/"
+
   def generate_url(code)
-    ShortUrl.create(email: "email@email.com", code: code, full_link: "http://www.google.com/")
+    ShortUrl.create(email: EMAIL, code: code, full_link: FULL_LINK)
   end
 
   def response_json
     @response_json ||= OpenStruct.new(JSON.parse(response.body))    
   end
-
 
   describe "GET #show" do
     describe "with valid code" do
@@ -22,13 +24,12 @@ describe Api::ShortUrlsController, type: :controller do
       end
 
       it "returns full_link information" do
-        expect(response_json.full_link).to eq("http://www.google.com/")
+        expect(response_json.full_link).to eq(FULL_LINK)
       end
 
       it "returns email information" do
-        expect(response_json.email).to eq("email@email.com")
+        expect(response_json.email).to eq(EMAIL)
       end
-
     end
 
     describe "with invalid code" do
@@ -49,7 +50,7 @@ describe Api::ShortUrlsController, type: :controller do
   describe "POST #create" do
     describe "with valid attributes" do
       before(:each) do
-        @attrs = { email: "email@email.com", full_link: "http://www.google.com/" }
+        @attrs = { email: EMAIL, full_link: FULL_LINK}
       end
 
       it "is successful" do        
@@ -68,7 +69,24 @@ describe Api::ShortUrlsController, type: :controller do
         code = ShortUrl.first.code
         expect(response_json.link).to match /#{code}/
       end
+    end
 
+    describe "with existing short url attributes" do
+      before(:each) do
+        @existing = generate_url("abcde")
+        @attrs = { email: EMAIL, full_link: FULL_LINK }
+      end
+
+      it "returns the existing code" do
+        post :create, params: @attrs
+        expect(response_json.link).to match /abcde/
+      end
+
+      it "does not create a new record" do
+        expect{
+          post(:create, params: @attrs)
+        }.to change{ShortUrl.count}.by(0)        
+      end
     end
 
     describe "with invalid attributes" do
